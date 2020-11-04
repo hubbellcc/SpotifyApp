@@ -7,37 +7,37 @@
  * https://developer.spotify.com/web-api/authorization-guide/#authorization_code_flow
  */
 let express = require('express'); // Express web server framework
-var request = require('request'); // "Request" library
-var cors = require('cors');
-var querystring = require('querystring');
-var cookieParser = require('cookie-parser');
+let request = require('request'); // "Request" library
+let cors = require('cors');
+let querystring = require('querystring');
+let cookieParser = require('cookie-parser');
 let url = require("url");
-const PLAYLIST_ID = "0C7UaW6FFDZIFBaRbRsNaS";  // Might not be const, dynamically change playlist id?
+const PLAYLIST_ID = "0C7UaW6FFDZIFBaRbRsNaS";  // TODO Might not be const, dynamically change playlist id?
 
 let access_token = null;
 
-var client_id = 'f90a6a0ff57b43149d6c4e0f36301d82'; // Your client id
-var client_secret = 'f4d659d613a24ce293cb33197b2eacae'; // Your secret
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+let client_id = 'f90a6a0ff57b43149d6c4e0f36301d82'; // Your client id
+let client_secret = 'f4d659d613a24ce293cb33197b2eacae'; // Your secret
+let redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
  * @return {string} The generated string
  */
-var generateRandomString = function(length) {
-    var text = '';
-    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+let generateRandomString = function(length) {
+    let text = '';
+    let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
 };
 
-var stateKey = 'spotify_auth_state';
+let stateKey = 'spotify_auth_state';
 
-var app = express();
+const app = express();
 
 app.use(express.static(__dirname + '/public'))
     .use(cors())
@@ -47,11 +47,13 @@ app.use(express.urlencoded({extended:true}));
 
 app.get('/login', function(req, res) {
 
-    var state = generateRandomString(16);
+    let state = generateRandomString(16);
     res.cookie(stateKey, state);
 
     // your application requests authorization
-    var scope = 'user-read-private user-read-email playlist-modify-public playlist-read-private playlist-read-collaborative';
+    // The scope is a list of actions that the user is presented with and allows the app to do
+    // Additional scope params and what each does can be found in their docs
+    let scope = 'user-read-private user-read-email playlist-modify-public playlist-read-private playlist-read-collaborative';
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
             response_type: 'code',
